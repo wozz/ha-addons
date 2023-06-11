@@ -10,9 +10,13 @@ jobs:
 
   build:
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
     - name: Build envoy docker image
       run: cd envoy_proxy/custom_envoy && docker buildx build --platform linux/arm64 -t envoyproxy:v1.26.2-$(date +%s) .
