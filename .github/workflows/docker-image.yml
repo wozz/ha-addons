@@ -1,0 +1,18 @@
+name: Envoy Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build envoy docker image
+      run: cd envoy_proxy/custom_envoy && docker buildx build --platform linux/arm64 -t envoyproxy:v1.26.2-$(date +%s) .
