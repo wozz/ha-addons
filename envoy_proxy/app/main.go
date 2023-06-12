@@ -18,8 +18,10 @@ import (
 	tls "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
 	"github.com/envoyproxy/go-control-plane/pkg/wellknown"
 	patch "github.com/geraldo-labs/merge-struct"
-	"github.com/golang/protobuf/jsonpb"
-	"github.com/golang/protobuf/ptypes"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 var opt = options{
@@ -37,6 +39,7 @@ type options struct {
 	PrivKey       string `json:"ssl_privkey"`
 	HAPort        int    `json:"ha_port"`
 	ExposeMetrics bool   `json:"expose_metrics"`
+	RedirectHTTP  bool   `json:"redirect_http"`
 	OutputFile    string `json:"output_file"`
 }
 
@@ -72,8 +75,79 @@ func init() {
 	patch.Struct(&opt, fileOpts)
 }
 
+func MessageToAny(msg proto.Message) *anypb.Any {
+	a, _ := anypb.New(msg)
+	return a
+}
+
+func httpListener() *listener.Listener {
+	return &listener.Listener{
+		Name: "listener_http",
+		Address: &core.Address{
+			Address: &core.Address_SocketAddress{
+				SocketAddress: &core.SocketAddress{
+					Address: "0.0.0.0",
+					PortSpecifier: &core.SocketAddress_PortValue{
+						PortValue: 80,
+					},
+				},
+			},
+		},
+		FilterChains: []*listener.FilterChain{
+			{
+				Filters: []*listener.Filter{
+					{
+						Name: "envoy.filters.network.http_connection_manager",
+						ConfigType: &listener.Filter_TypedConfig{
+							TypedConfig: MessageToAny(&hcm.HttpConnectionManager{
+								StatPrefix: "http_redirect",
+								CodecType:  hcm.HttpConnectionManager_AUTO,
+								RouteSpecifier: &hcm.HttpConnectionManager_RouteConfig{
+									RouteConfig: &route.RouteConfiguration{
+										Name: "local_route_http",
+										VirtualHosts: []*route.VirtualHost{
+											{
+												Name:    "local_service_http",
+												Domains: []string{opt.Domain},
+												Routes: []*route.Route{
+													{
+														Match: &route.RouteMatch{
+															PathSpecifier: &route.RouteMatch_Prefix{
+																Prefix: "/",
+															},
+														},
+														Action: &route.Route_Redirect{
+															Redirect: &route.RedirectAction{
+																SchemeRewriteSpecifier: &route.RedirectAction_HttpsRedirect{
+																	HttpsRedirect: true,
+																},
+																PortRedirect: 443, // assume user wants port 80 redirected to 443
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+								HttpFilters: []*hcm.HttpFilter{
+									{
+										Name: "envoy.filters.http.router",
+										ConfigType: &hcm.HttpFilter_TypedConfig{
+											TypedConfig: MessageToAny(&router.Router{}),
+										},
+									},
+								},
+							}),
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
 func main() {
-	routerConfig, _ := ptypes.MarshalAny(&router.Router{})
 	routes := []*route.Route{
 		{
 			Match: &route.RouteMatch{
@@ -134,13 +208,13 @@ func main() {
 			{
 				Name: wellknown.Router,
 				ConfigType: &hcm.HttpFilter_TypedConfig{
-					TypedConfig: routerConfig,
+					TypedConfig: MessageToAny(&router.Router{}),
 				},
 			},
 		},
 	}
 
-	managerConfig, _ := ptypes.MarshalAny(httpManager)
+	managerConfig := MessageToAny(httpManager)
 
 	// Tls context config
 	tlsContext := &tls.DownstreamTlsContext{
@@ -162,7 +236,7 @@ func main() {
 		},
 	}
 
-	tlsConfig, _ := ptypes.MarshalAny(tlsContext)
+	tlsConfig := MessageToAny(tlsContext)
 
 	// Listeners
 	listeners := []*listener.Listener{
@@ -199,6 +273,10 @@ func main() {
 		},
 	}
 
+	if opt.RedirectHTTP {
+		listeners = append(listeners, httpListener())
+	}
+
 	admin := &bootstrap.Admin{
 		Address: &core.Address{
 			Address: &core.Address_Pipe{
@@ -216,7 +294,7 @@ func main() {
 			ClusterDiscoveryType: &cluster.Cluster_Type{
 				Type: cluster.Cluster_LOGICAL_DNS,
 			},
-			ConnectTimeout: ptypes.DurationProto(250 * time.Millisecond),
+			ConnectTimeout: durationpb.New(250 * time.Millisecond),
 			LoadAssignment: &endpoint.ClusterLoadAssignment{
 				ClusterName: "service_homeassistant",
 				Endpoints: []*endpoint.LocalityLbEndpoints{
@@ -250,7 +328,7 @@ func main() {
 			ClusterDiscoveryType: &cluster.Cluster_Type{
 				Type: cluster.Cluster_STATIC,
 			},
-			ConnectTimeout: ptypes.DurationProto(250 * time.Millisecond),
+			ConnectTimeout: durationpb.New(250 * time.Millisecond),
 			LoadAssignment: &endpoint.ClusterLoadAssignment{
 				ClusterName: "admin_interface",
 				Endpoints: []*endpoint.LocalityLbEndpoints{
@@ -286,13 +364,12 @@ func main() {
 		Admin: admin,
 	}
 
-	marshaler := &jsonpb.Marshaler{}
-	str, err := marshaler.MarshalToString(config)
+	b, err := protojson.Marshal(config)
 	if err != nil {
 		log.Fatalf("Failed to marshal config to JSON: %v", err)
 	}
 
-	err = ioutil.WriteFile(opt.OutputFile, []byte(str), os.ModePerm)
+	err = ioutil.WriteFile(opt.OutputFile, b, os.ModePerm)
 	if err != nil {
 		log.Fatalf("Failed to write config to file: %v", err)
 	}
