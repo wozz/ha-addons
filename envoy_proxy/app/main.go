@@ -75,31 +75,19 @@ func init() {
 	patch.Struct(&opt, fileOpts)
 }
 
-func MessageToAny(msg proto.Message) *anypb.Any {
-	a, _ := anypb.New(msg)
-	return a
-}
-
+// httpListener sets up a listener for unencrypted HTTP traffic
+// with a route that redirects everything to HTTPS
 func httpListener() *listener.Listener {
 	return &listener.Listener{
-		Name: "listener_http",
-		Address: &core.Address{
-			Address: &core.Address_SocketAddress{
-				SocketAddress: &core.SocketAddress{
-					Address: "0.0.0.0",
-					PortSpecifier: &core.SocketAddress_PortValue{
-						PortValue: 80,
-					},
-				},
-			},
-		},
+		Name:    "listener_http",
+		Address: coreAddress("0.0.0.0", 80),
 		FilterChains: []*listener.FilterChain{
 			{
 				Filters: []*listener.Filter{
 					{
 						Name: "envoy.filters.network.http_connection_manager",
 						ConfigType: &listener.Filter_TypedConfig{
-							TypedConfig: MessageToAny(&hcm.HttpConnectionManager{
+							TypedConfig: messageToAny(&hcm.HttpConnectionManager{
 								StatPrefix: "http_redirect",
 								CodecType:  hcm.HttpConnectionManager_AUTO,
 								RouteSpecifier: &hcm.HttpConnectionManager_RouteConfig{
@@ -111,11 +99,7 @@ func httpListener() *listener.Listener {
 												Domains: []string{opt.Domain},
 												Routes: []*route.Route{
 													{
-														Match: &route.RouteMatch{
-															PathSpecifier: &route.RouteMatch_Prefix{
-																Prefix: "/",
-															},
-														},
+														Match: prefixMatch("/"),
 														Action: &route.Route_Redirect{
 															Redirect: &route.RedirectAction{
 																SchemeRewriteSpecifier: &route.RedirectAction_HttpsRedirect{
@@ -131,12 +115,7 @@ func httpListener() *listener.Listener {
 									},
 								},
 								HttpFilters: []*hcm.HttpFilter{
-									{
-										Name: "envoy.filters.http.router",
-										ConfigType: &hcm.HttpFilter_TypedConfig{
-											TypedConfig: MessageToAny(&router.Router{}),
-										},
-									},
+									routerFilter(),
 								},
 							}),
 						},
@@ -147,111 +126,34 @@ func httpListener() *listener.Listener {
 	}
 }
 
+func routerFilter() *hcm.HttpFilter {
+	return &hcm.HttpFilter{
+		Name: wellknown.Router,
+		ConfigType: &hcm.HttpFilter_TypedConfig{
+			TypedConfig: messageToAny(&router.Router{}),
+		},
+	}
+}
+
 func main() {
 	routes := []*route.Route{
 		{
-			Match: &route.RouteMatch{
-				PathSpecifier: &route.RouteMatch_Prefix{
-					Prefix: "/",
-				},
-			},
-			Action: &route.Route_Route{
-				Route: &route.RouteAction{
-					ClusterSpecifier: &route.RouteAction_Cluster{
-						Cluster: "service_homeassistant",
-					},
-				},
-			},
+			Match:  prefixMatch("/"),
+			Action: routeToCluster("service_homeassistant"),
 		},
 	}
 
 	if opt.ExposeMetrics {
-		metricsRoute := &route.Route{
-			Match: &route.RouteMatch{
-				PathSpecifier: &route.RouteMatch_Path{
-					Path: "/internal/metrics",
-				},
-			},
-			Action: &route.Route_Route{
-				Route: &route.RouteAction{
-					ClusterSpecifier: &route.RouteAction_Cluster{
-						Cluster: "admin_interface",
-					},
-					PrefixRewrite: "/stats/prometheus",
-				},
-			},
-		}
-		routes = append([]*route.Route{metricsRoute}, routes...)
+		routes = append([]*route.Route{metricsRoute()}, routes...)
 	}
 
-	// HttpConnectionManager config
-	httpManager := &hcm.HttpConnectionManager{
-		StatPrefix: "ingress_http",
-		UpgradeConfigs: []*hcm.HttpConnectionManager_UpgradeConfig{
-			{
-				UpgradeType: "websocket",
-			},
-		},
-		RouteSpecifier: &hcm.HttpConnectionManager_RouteConfig{
-			RouteConfig: &route.RouteConfiguration{
-				Name: "local_route",
-				VirtualHosts: []*route.VirtualHost{
-					{
-						Name:    "local_service",
-						Domains: []string{opt.Domain},
-						Routes:  routes,
-					},
-				},
-			},
-		},
-		HttpFilters: []*hcm.HttpFilter{
-			{
-				Name: wellknown.Router,
-				ConfigType: &hcm.HttpFilter_TypedConfig{
-					TypedConfig: MessageToAny(&router.Router{}),
-				},
-			},
-		},
-	}
-
-	managerConfig := MessageToAny(httpManager)
-
-	// Tls context config
-	tlsContext := &tls.DownstreamTlsContext{
-		CommonTlsContext: &tls.CommonTlsContext{
-			TlsCertificates: []*tls.TlsCertificate{
-				{
-					CertificateChain: &core.DataSource{
-						Specifier: &core.DataSource_Filename{
-							Filename: "/ssl/" + opt.FullChain,
-						},
-					},
-					PrivateKey: &core.DataSource{
-						Specifier: &core.DataSource_Filename{
-							Filename: "/ssl/" + opt.PrivKey,
-						},
-					},
-				},
-			},
-		},
-	}
-
-	tlsConfig := MessageToAny(tlsContext)
+	managerConfig := messageToAny(httpManager(routes))
 
 	// Listeners
 	listeners := []*listener.Listener{
 		{
-			Name: "listener_0",
-			Address: &core.Address{
-				Address: &core.Address_SocketAddress{
-					SocketAddress: &core.SocketAddress{
-						Address: "0.0.0.0",
-						PortSpecifier: &core.SocketAddress_PortValue{
-							PortValue: 443,
-						},
-					},
-				},
-			},
+			Name:    "listener_0",
+			Address: coreAddress("0.0.0.0", 443),
 			FilterChains: []*listener.FilterChain{
 				{
 					Filters: []*listener.Filter{
@@ -265,7 +167,7 @@ func main() {
 					TransportSocket: &core.TransportSocket{
 						Name: wellknown.TransportSocketTls,
 						ConfigType: &core.TransportSocket_TypedConfig{
-							TypedConfig: tlsConfig,
+							TypedConfig: messageToAny(tlsContext()),
 						},
 					},
 				},
@@ -278,13 +180,7 @@ func main() {
 	}
 
 	admin := &bootstrap.Admin{
-		Address: &core.Address{
-			Address: &core.Address_Pipe{
-				Pipe: &core.Pipe{
-					Path: "/tmp/admin.sock",
-				},
-			},
-		},
+		Address: udsAddress("/tmp/admin.sock"),
 	}
 
 	// Clusters
@@ -303,16 +199,7 @@ func main() {
 							{
 								HostIdentifier: &endpoint.LbEndpoint_Endpoint{
 									Endpoint: &endpoint.Endpoint{
-										Address: &core.Address{
-											Address: &core.Address_SocketAddress{
-												SocketAddress: &core.SocketAddress{
-													Address: "homeassistant.local.hass.io",
-													PortSpecifier: &core.SocketAddress_PortValue{
-														PortValue: uint32(opt.HAPort),
-													},
-												},
-											},
-										},
+										Address: coreAddress("homeassistant.local.hass.io", opt.HAPort),
 									},
 								},
 							},
@@ -337,13 +224,7 @@ func main() {
 							{
 								HostIdentifier: &endpoint.LbEndpoint_Endpoint{
 									Endpoint: &endpoint.Endpoint{
-										Address: &core.Address{
-											Address: &core.Address_Pipe{
-												Pipe: &core.Pipe{
-													Path: "/tmp/admin.sock",
-												},
-											},
-										},
+										Address: udsAddress("/tmp/admin.sock"),
 									},
 								},
 							},
@@ -372,5 +253,115 @@ func main() {
 	err = ioutil.WriteFile(opt.OutputFile, b, os.ModePerm)
 	if err != nil {
 		log.Fatalf("Failed to write config to file: %v", err)
+	}
+}
+
+func coreAddress(host string, port int) *core.Address {
+	return &core.Address{
+		Address: &core.Address_SocketAddress{
+			SocketAddress: &core.SocketAddress{
+				Address: host,
+				PortSpecifier: &core.SocketAddress_PortValue{
+					PortValue: uint32(port),
+				},
+			},
+		},
+	}
+}
+
+func udsAddress(path string) *core.Address {
+	return &core.Address{
+		Address: &core.Address_Pipe{
+			Pipe: &core.Pipe{
+				Path: path,
+			},
+		},
+	}
+}
+
+func metricsRoute() *route.Route {
+	routeAction := routeToCluster("admin_interface")
+	routeAction.Route.PrefixRewrite = "/stats/prometheus"
+	return &route.Route{
+		Match:  pathMatch("/internal/metrics"),
+		Action: routeAction,
+	}
+}
+
+func messageToAny(msg proto.Message) *anypb.Any {
+	a, _ := anypb.New(msg)
+	return a
+}
+
+func httpManager(routes []*route.Route) *hcm.HttpConnectionManager {
+	return &hcm.HttpConnectionManager{
+		StatPrefix: "ingress_http",
+		UpgradeConfigs: []*hcm.HttpConnectionManager_UpgradeConfig{
+			{
+				UpgradeType: "websocket",
+			},
+		},
+		RouteSpecifier: &hcm.HttpConnectionManager_RouteConfig{
+			RouteConfig: &route.RouteConfiguration{
+				Name: "local_route",
+				VirtualHosts: []*route.VirtualHost{
+					{
+						Name:    "local_service",
+						Domains: []string{opt.Domain},
+						Routes:  routes,
+					},
+				},
+			},
+		},
+		HttpFilters: []*hcm.HttpFilter{
+			routerFilter(),
+		},
+	}
+}
+
+func prefixMatch(prefix string) *route.RouteMatch {
+	return &route.RouteMatch{
+		PathSpecifier: &route.RouteMatch_Prefix{
+			Prefix: "/",
+		},
+	}
+}
+
+func pathMatch(path string) *route.RouteMatch {
+	return &route.RouteMatch{
+		PathSpecifier: &route.RouteMatch_Path{
+			Path: "/internal/metrics",
+		},
+	}
+}
+
+func routeToCluster(clusterName string) *route.Route_Route {
+	return &route.Route_Route{
+		Route: &route.RouteAction{
+			ClusterSpecifier: &route.RouteAction_Cluster{
+				Cluster: clusterName,
+			},
+		},
+	}
+}
+
+func fileSource(path string) *core.DataSource {
+	return &core.DataSource{
+		Specifier: &core.DataSource_Filename{
+			Filename: path,
+		},
+	}
+}
+
+func tlsContext() *tls.DownstreamTlsContext {
+	return &tls.DownstreamTlsContext{
+		CommonTlsContext: &tls.CommonTlsContext{
+			TlsCertificates: []*tls.TlsCertificate{
+				{
+					CertificateChain: fileSource("/ssl/" + opt.FullChain),
+					PrivateKey:       fileSource("/ssl/" + opt.PrivKey),
+				},
+			},
+		},
 	}
 }
