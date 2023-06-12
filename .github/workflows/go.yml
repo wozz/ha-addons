@@ -21,8 +21,9 @@ jobs:
       with:
         go-version: 1.20
 
+    - name: Download
+      run: cd envoy_proxy/app && go mod download
     - name: Build
       run: cd envoy_proxy/app && go build -v ./...
-
     - name: Vet
       run: cd envoy_proxy/app && go vet -v ./...
