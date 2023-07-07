@@ -4,6 +4,8 @@ FROM golang:1.20 as build
 #LABEL maintainer = "bertusbaron@gmail.com"
 ENV LOGSPOUT_HASSIO_VERSION='master'
 
+RUN date
+
 WORKDIR /go/src/github.com/wozz/
 
 RUN git clone --depth 1 https://github.com/wozz/logspout.git -b ${LOGSPOUT_HASSIO_VERSION}
