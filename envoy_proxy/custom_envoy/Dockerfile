@@ -21,7 +21,7 @@ COPY --from=arm64v8/golang:1.20.5-bullseye /usr/local/go/ /usr/local/go/
 
 ENV PATH="/usr/local/go/bin:${PATH}"
 
-ARG ENVOY_VERSION=1.26.2
+ARG ENVOY_VERSION=1.26.3
 RUN git clone --branch v${ENVOY_VERSION} https://github.com/envoyproxy/envoy.git
 
 # note: this disables a bunch of stuff that probably isn't needed to reduce binary size/compile time
