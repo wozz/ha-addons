@@ -3,7 +3,8 @@ version: 4.12.10
 slug: letsencrypt
 name: Let's Encrypt
 description: Manage certificate from Let's Encrypt
-url: https://github.com/home-assistant/addons/tree/master/letsencrypt
+#url: https://github.com/home-assistant/addons/tree/master/letsencrypt
+url: "https://github.com/wozz/ha-addons/tree/main/letsencrypt"
 arch:
   - armhf
   - armv7
@@ -11,7 +12,7 @@ arch:
   - amd64
   - i386
 boot: manual
-image: homeassistant/{arch}-addon-letsencrypt
+#image: homeassistant/{arch}-addon-letsencrypt
 init: false
 map:
   - ssl:rw
