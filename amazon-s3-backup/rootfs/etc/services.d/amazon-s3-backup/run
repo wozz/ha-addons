@@ -6,22 +6,18 @@
 
 bashio::log.info "Starting S3 Backup..."
 
-custom_endpoint="$(bashio::config 'custom_endpoint')"
-bucket_name="$(bashio::config 'bucket_name')"
-bucket_region="$(bashio::config 'bucket_region' 'us-east-1')"
-monitor_path="/backup"
+export custom_endpoint="$(bashio::config 'custom_endpoint')"
+export bucket_name="$(bashio::config 'bucket_name')"
 
 export AWS_ACCESS_KEY_ID="$(bashio::config 'aws_access_key')"
 export AWS_SECRET_ACCESS_KEY="$(bashio::config 'aws_secret_access_key')"
-export AWS_REGION="$bucket_region"
+export AWS_REGION="$(bashio::config 'bucket_region' 'us-east-1')"
 
 bashio::log.debug "Using AWS CLI version: '$(aws --version)'"
-bashio::log.debug "Command: 'aws s3 sync $monitor_path s3://$bucket_name/ --no-progress'"
 
-aws s3 sync \
-  $monitor_path \
-  --endpoint-url $custom_endpoint \
-  s3://$bucket_name/ \
-  --no-progress
+# Discover and download/copy backups made in the last day that are not stored locally
+curl -s -H "Authorization: Bearer $SUPERVISOR_TOKEN" supervisor/backups | jq -r \
+  '.data.backups[] | select(.date[0:19] | strptime("%Y-%m-%dT%H:%M:%S") | mktime > now-86400) | select(.location != null) | .slug' \
+  xargs -n1 -I% sh -c 'curl -s -H "Authorization: Bearer $SUPERVISOR_TOKEN" supervisor/backups/%/download | aws s3 cp --endpoint-url $custom_endpoint - s3://$bucket_name/%.tar'
 
 bashio::log.info "Finished S3 Backup."
