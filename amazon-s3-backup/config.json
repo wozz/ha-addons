@@ -1,6 +1,6 @@
 {
     "name": "S3 Backup",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "slug": "s3-backup",
     "description": "Sync Backups to your S3 bucket",
     "url": "https://github.com/wozz/ha-addons/tree/main/amazon-s3-backup",
