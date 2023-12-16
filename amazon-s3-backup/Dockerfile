@@ -12,5 +12,4 @@ RUN apk add -v --update --no-cache \
         groff \
         less \
         jq \
-        && \
-    pip3 install --upgrade awscli
+        aws-cli
