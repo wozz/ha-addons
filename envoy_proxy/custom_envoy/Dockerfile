@@ -17,11 +17,11 @@ RUN --mount=type=cache,target=/var/cache/apt apt-get update && apt-get install -
 
 RUN curl -L -s -o /usr/local/bin/bazel https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-arm64 && chmod +x /usr/local/bin/bazel
 
-COPY --from=arm64v8/golang:1.20.6-bullseye /usr/local/go/ /usr/local/go/
+COPY --from=arm64v8/golang:1.21.5-bullseye /usr/local/go/ /usr/local/go/
 
 ENV PATH="/usr/local/go/bin:${PATH}"
 
-ARG ENVOY_VERSION=1.27.0
+ARG ENVOY_VERSION=1.28.0
 RUN git clone --branch v${ENVOY_VERSION} https://github.com/envoyproxy/envoy.git
 
 # https://github.com/envoyproxy/envoy/issues/28670

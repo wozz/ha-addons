@@ -1,6 +1,6 @@
 name: "Envoy Proxy"
 description: "An SSL/TLS proxy for HomeAssistant."
-version: "0.2.2"
+version: "0.3.0"
 slug: "envoy_proxy"
 init: false
 ports:
