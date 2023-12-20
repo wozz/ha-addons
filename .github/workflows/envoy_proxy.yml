@@ -23,4 +23,5 @@ jobs:
           args: |
             --aarch64 \
             --target envoy_proxy \
-            --docker-hub ghcr.io/wozz/ha-addons
+            --docker-hub ghcr.io/wozz/ha-addons \
+            --image envoy_proxy
