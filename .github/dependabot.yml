@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: gomod
+    directory: /envoy_proxy/app/
+    schedule:
+      interval: weekly
+  - package-ecosystem: "docker"
+    directory: "/envoy_proxy/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/logspout/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "docker"
+    directory: "/amazon-s3-backup/"
+    schedule:
+      interval: "weekly"

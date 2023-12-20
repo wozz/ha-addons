@@ -22,7 +22,6 @@ jobs:
         with:
           args: |
             --aarch64 \
-            --docker-hub-check \
             --target logspout \
             --docker-hub ghcr.io/wozz/ha-addons \
             --image logspout-{arch}
