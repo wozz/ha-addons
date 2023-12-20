@@ -24,4 +24,4 @@ jobs:
             --all \
             --target amazon-s3-backup \
             --docker-hub ghcr.io/wozz/ha-addons \
-            --image amazon-s3-backup
+            --image amazon-s3-backup-{arch}
