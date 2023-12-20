@@ -1,4 +1,4 @@
-name: "Publish Amazon S3 Backup"
+name: "Publish Logspout"
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   publish:
-    name: Publish Amazon S3 Backup Image
+    name: Publish Logspout Image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
@@ -21,8 +21,8 @@ jobs:
         uses: home-assistant/builder@master
         with:
           args: |
-            --all \
+            --aarch64 \
             --docker-hub-check \
-            --target amazon-s3-backup \
+            --target logspout \
             --docker-hub ghcr.io/wozz/ha-addons \
-            --image amazon-s3-backup-{arch}
+            --image logspout-{arch}
