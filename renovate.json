@@ -16,6 +16,14 @@
           "(aarch64|amd64|armhf|armv7|i386):\\s[\"']?(?<depName>.*?):(?<currentValue>.*?)[\"']?\\s"
         ],
         "datasourceTemplate": "docker"
-      }
-    ]
+      },
+      {
+      "fileMatch": ["^logspout/Dockerfile$"],
+      "matchStrings": [
+        "ENV LOGSPOUT_HASSIO_VERSION=[\"']?(?<currentValue>.+?)[\"']?\\s+"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "wozz/logspout"
+    }
+  ]
 }
