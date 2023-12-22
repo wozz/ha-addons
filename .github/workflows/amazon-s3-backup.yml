@@ -18,7 +18,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Check Version
-        uses: .github/actions/check-ghcr
+        uses: ./.github/actions/check-ghcr
         with:
           image: wozz/ha-addons/amazon-s3-backup-aarch64
           configpath: amazon-s3-backup/config.json
