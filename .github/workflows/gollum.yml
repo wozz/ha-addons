@@ -24,7 +24,7 @@ jobs:
           image: wozz/ha-addons/gollum-aarch64
           configpath: gollum/config.yaml
       - name: Publish
-        if: ${{ steps.check.outputs.status == '404' }}
+        if: ${{ steps.check.outputs.status != '200' }}
         uses: home-assistant/builder@master
         with:
           args: |
