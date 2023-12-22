@@ -1,7 +1,5 @@
 FROM gollumwiki/gollum:v5.3.2
 
-RUN git config --file /home/www-data/.gitconfig --add safe.directory /data
-
 USER root
 
 RUN apk add --update \
