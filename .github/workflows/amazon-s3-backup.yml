@@ -20,6 +20,7 @@ jobs:
       - name: Check Version
         uses: ./.github/actions/check-ghcr
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           image: wozz/ha-addons/amazon-s3-backup-aarch64
           configpath: amazon-s3-backup/config.json
       - name: Publish
