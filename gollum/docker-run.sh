@@ -13,7 +13,7 @@ if [ ${GOLLUM_AUTHOR_EMAIL:+1} ]; then
 	git config user.email "${GOLLUM_AUTHOR_EMAIL}"
 fi
 
-INGRESS_URL=$(curl -H "Authorization: Bearer $SUPERVISOR_TOKEN" -s supervisor/addons/12c9acea_gollum/info | jq -r .data.ingress_url)
+INGRESS_ENTRY=$(curl -H "Authorization: Bearer $SUPERVISOR_TOKEN" -s supervisor/addons/12c9acea_gollum/info | jq -r .data.ingress_entry)
 
 # Start gollum service
-exec gollum --base-path $INGRESS_URL $@
+exec gollum --base-path $INGRESS_ENTRY $@
