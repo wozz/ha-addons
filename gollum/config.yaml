@@ -1,7 +1,7 @@
 name: "Gollum"
 description: "Git based wiki"
-version: "0.0.1"
-image: ghcr.io/wozz/ha-addons/gollum
+version: "0.0.2"
+image: ghcr.io/wozz/ha-addons/gollum-{arch}
 slug: "gollum"
 init: false
 startup: application
