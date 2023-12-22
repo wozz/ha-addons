@@ -4,3 +4,5 @@ WORKDIR /data
 
 ENV GOLLUM_AUTHOR_USERNAME=homeassistant
 ENV GOLLUM_AUTHOR_EMAIL=homeassistant@ha.local
+
+ENTRYPOINT ["/docker-run.sh", "--base-path", "/hassio/ingress/12c9acea_gollum/"]
