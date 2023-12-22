@@ -1,5 +1,7 @@
 FROM gollumwiki/gollum:v5.3.2
 
+RUN git config --file /home/www-data/.gitconfig --add safe.directory /data
+
 USER root
 
 RUN apk add --update \
@@ -10,7 +12,7 @@ RUN apk add --update \
 
 COPY docker-run.sh /docker-run.sh
 RUN chmod +x /docker-run.sh
-RUN git config --file /home/www-data/.gitconfig --add safe.directory /data
+
 USER www-data
 WORKDIR /data
 
