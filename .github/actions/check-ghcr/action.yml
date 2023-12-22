@@ -13,6 +13,7 @@ inputs:
 outputs:
   status:
     description: "status code for image manifest"
+    value: ${{ steps.check.outputs.status }}
 runs:
   using: "composite"
   steps:
