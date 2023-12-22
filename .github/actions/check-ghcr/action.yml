@@ -10,6 +10,9 @@ inputs:
   token:
     description: "token to use"
     required: true
+outputs:
+  status:
+    description: "status code for image manifest"
 runs:
   using: "composite"
   steps:
