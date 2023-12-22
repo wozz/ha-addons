@@ -19,7 +19,7 @@ type supervisorResp struct {
 }
 
 func fetchIngressURL() string {
-	req, err := http.NewRequest(http.MethodGet, "supervisor/addons/12c9acea_gollum/info", nil)
+	req, err := http.NewRequest(http.MethodGet, "http://supervisor/addons/12c9acea_gollum/info", nil)
 	if err != nil {
 		log.Fatalf("could not create request: %v", err)
 	}
