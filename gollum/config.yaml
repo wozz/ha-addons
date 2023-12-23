@@ -1,6 +1,6 @@
 name: "Gollum"
 description: "Git based wiki"
-version: "0.1.0"
+version: "0.1.1"
 image: ghcr.io/wozz/ha-addons/gollum-{arch}
 panel_icon: mdi:file-document-multiple-outline
 slug: "gollum"
