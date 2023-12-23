@@ -15,5 +15,7 @@ fi
 
 INGRESS_URL=$(curl -H "Authorization: Bearer $SUPERVISOR_TOKEN" -s supervisor/addons/12c9acea_gollum/info | jq -r .data.ingress_url)
 
+cp /custom.css /data/custom.css
+
 # Start gollum service
-exec gollum --base-path $INGRESS_URL $@
+exec gollum --base-path $INGRESS_URL --css $@
