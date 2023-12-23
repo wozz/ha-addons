@@ -4,7 +4,7 @@
 
     <h1 class="header-title text-center text-md-left py-4">
       <span class="f1-light color-fg-subtle">
-        {{t.comparing_versions_of}}
+        Comparing versions of
       </span>
       {{name}}
     </h1>
@@ -26,7 +26,7 @@
             onclick="$('#gollum-revert-form').submit()"
             type="submit"
           >
-            {{t.revert}}
+            Revert Changes
           </button>
         </span>
         {{/allow_editing}}
@@ -36,7 +36,7 @@
         class="btn btn-sm action-page-history"
         href="{{history_path}}/{{escaped_url_path}}"
       >
-        {{t.back_to_page_history}}
+        Back to Page History
       </a>
     </div>
 
@@ -45,7 +45,7 @@
         {{path}}
 
         <span class="px-2 float-right">
-          {{t.comparing_from}}
+          Comparing {{before}} to {{after}}
         </span>
       </div>
 
@@ -72,7 +72,7 @@
            onclick="$('#gollum-revert-form').submit()"
            type="submit"
          >
-           {{t.revert}}
+          Revert Changes
          </button>
        </span>
      {{/allow_editing}}
@@ -80,7 +80,7 @@
 
     <div class="pt-4">
       <a href="#">
-        {{t.back_to_top}}
+        Back to Top
       </a>
     </div>
   </div>

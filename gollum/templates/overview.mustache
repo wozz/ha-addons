@@ -24,7 +24,7 @@
               {{#is_file}}
                 <button
                   class="btn btn-sm float-right delete-file"
-                  data-confirm="{{t.delete_confirmation}}"
+                  data-confirm="Are you sure you want to delete {{name}}?"
                   data-file-path="{{file_path}}"
                 >
                   {{#octicon}}trash{{/octicon}}
@@ -41,9 +41,9 @@
 
 {{#no_results}}
   <p id="no-results">
-    {{t.no_pages_in}}
+    There are no pages in
     <strong>{{current_path}}</strong>
-    {{t.on}}
+    on
     <strong>{{ref}}</strong>.
   </p>
 {{/no_results}}
@@ -51,7 +51,7 @@
 </div>
 <div class="pt-4" id="footer">
   <a href="#">
-    {{t.back_to_top}}
+    Back to Top
   </a>
 </div>
 </div>
