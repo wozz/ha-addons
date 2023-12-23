@@ -16,4 +16,4 @@ fi
 INGRESS_URL=$(curl -H "Authorization: Bearer $SUPERVISOR_TOKEN" -s supervisor/addons/12c9acea_gollum/info | jq -r .data.ingress_url)
 
 # Start gollum service
-exec gollum --base-path $INGRESS_URL --template-dir /templates --allow-uploads page $@
+exec gollum --base-path $INGRESS_URL --template-dir /templates --emoji --allow-uploads page $@
