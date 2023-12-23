@@ -15,8 +15,5 @@ fi
 
 INGRESS_URL=$(curl -H "Authorization: Bearer $SUPERVISOR_TOKEN" -s supervisor/addons/12c9acea_gollum/info | jq -r .data.ingress_url)
 
-cp /custom.css /data/custom.css
-git diff --quiet && git diff --staged --quiet || git commit -am 'update custom.css'
-
 # Start gollum service
-exec gollum --base-path $INGRESS_URL --template-dir /templates --allow-uploads page --css $@
+exec gollum --base-path $INGRESS_URL --template-dir /templates --allow-uploads page $@
