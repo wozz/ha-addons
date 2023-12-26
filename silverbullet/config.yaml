@@ -1,13 +1,14 @@
 name: "SilverBullet"
 description: "A workshop for the mind"
-version: "0.0.1"
+version: "0.0.2"
 image: ghcr.io/wozz/ha-addons/silverbullet-{arch}
 panel_icon: mdi:file-document-multiple-outline
 slug: "silverbullet"
 hassio_api: false
 init: false
-ingress: true
-ingress_port: 3000
+ingress: false
+ports:
+  "3000/tcp": 3300
 arch:
   - aarch64
 options: {}
