@@ -1,7 +1,7 @@
 FROM node:21-alpine3.18 as build
 WORKDIR /app
 
-ENV MATTER_SERVER_UI_VERSION="v0.2.0"
+ENV MATTER_SERVER_UI_VERSION="v0.2.1"
 
 RUN \
     apk add --no-cache git \
@@ -9,6 +9,9 @@ RUN \
     && cd matter-server-ui \
     && git checkout ${MATTER_SERVER_UI_VERSION} \
     && npm install \
+        --no-audit \
+        --no-fund \
+        --no-update-notifier \
     && npm run build
 
 FROM nginx:alpine3.18
