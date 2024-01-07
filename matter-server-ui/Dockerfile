@@ -1,7 +1,14 @@
+FROM golang:1.21 as gobuild
+
+WORKDIR /app
+COPY wsproxy/ .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o wsproxy .
+
 FROM node:21-alpine3.18 as build
 WORKDIR /app
 
-ENV MATTER_SERVER_UI_VERSION="v0.2.1"
+ENV MATTER_SERVER_UI_VERSION="v0.2.2"
 
 RUN \
     apk add --no-cache git \
@@ -14,10 +21,10 @@ RUN \
         --no-update-notifier \
     && npm run build
 
-FROM nginx:alpine3.18
+FROM alpine:3.18
 
-COPY --from=build /app/matter-server-ui/build /usr/share/nginx/html
+COPY --from=build /app/matter-server-ui/build /static
+COPY --from=gobuild /app/wsproxy /app/main
+EXPOSE 8099
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/app/main"]
