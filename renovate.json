@@ -6,24 +6,32 @@
   "ignoreDeps": ["us-docker.pkg.dev/wozz-hass/public/envoyproxy"],
   "commitMessagePrefix": "⬆️",
   "regexManagers": [
-      {
-        "fileMatch": [
-          "^(.*\/)?(Dockerfile|build\\.yaml)$"
-        ],
-        "matchStringsStrategy": "any",
-        "matchStrings": [
-          "ARG BUILD_FROM=(?<depName>.*?):(?<currentValue>.*?)\\s+",
-          "(aarch64|amd64|armhf|armv7|i386):\\s[\"']?(?<depName>.*?):(?<currentValue>.*?)[\"']?\\s"
-        ],
-        "datasourceTemplate": "docker"
-      },
-      {
+    {
+      "fileMatch": [
+        "^(.*\/)?(Dockerfile|build\\.yaml)$"
+      ],
+      "matchStringsStrategy": "any",
+      "matchStrings": [
+        "ARG BUILD_FROM=(?<depName>.*?):(?<currentValue>.*?)\\s+",
+        "(aarch64|amd64|armhf|armv7|i386):\\s[\"']?(?<depName>.*?):(?<currentValue>.*?)[\"']?\\s"
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
       "fileMatch": ["^logspout/Dockerfile$"],
       "matchStrings": [
         "ENV LOGSPOUT_HASSIO_VERSION=[\"']?(?<currentValue>.+?)[\"']?\\s+"
       ],
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "wozz/logspout"
+    },
+    {
+      "fileMatch": ["^matter-server-ui/Dockerfile$"],
+      "matchStrings": [
+        "ENV MATTER_SERVER_UI_VERSION=[\"']?(?<currentValue>.+?)[\"']?\\s+"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "wozz/matter-server-ui"
     }
   ]
 }
