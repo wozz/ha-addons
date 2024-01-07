@@ -1,5 +1,5 @@
 name: Matter Server UI
-version: "0.2.0"
+version: "0.2.1"
 image: "ghcr.io/wozz/ha-addons/matter-server-ui-{arch}"
 slug: matter-server-ui
 description: "Web UI to connect directly to the home assistant matter server"
@@ -7,8 +7,6 @@ url: "https://github.com/wozz/ha-addons/tree/main/matter-server-ui"
 arch:
   - aarch64
 advanced: true
-services:
-  - matter:want
 ingress: true
 ingress_port: 80
 panel_icon: mdi:router-network-wireless
