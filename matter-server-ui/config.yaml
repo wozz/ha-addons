@@ -1,5 +1,5 @@
 name: Matter Server UI
-version: "0.2.3"
+version: "0.2.4"
 image: "ghcr.io/wozz/ha-addons/matter-server-ui-{arch}"
 slug: matter-server-ui
 description: "Web UI to connect directly to the home assistant matter server"
