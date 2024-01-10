@@ -1,6 +1,0 @@
-source 'https://rubygems.org'
-gem 'bibtex-ruby', '6.0.0'
-gem 'citeproc-ruby', '2.0.0'
-gem 'csl', '2.0.0' 
-gem 'csl-styles', '2.0.0'
-gem 'pandoc-ruby', '2.1.10'
