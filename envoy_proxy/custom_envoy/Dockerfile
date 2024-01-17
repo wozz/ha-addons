@@ -21,7 +21,7 @@ COPY --from=arm64v8/golang:1.21.6-bullseye /usr/local/go/ /usr/local/go/
 
 ENV PATH="/usr/local/go/bin:${PATH}"
 
-ARG ENVOY_VERSION=1.28.0
+ARG ENVOY_VERSION=1.29.0
 RUN git clone --branch v${ENVOY_VERSION} https://github.com/envoyproxy/envoy.git
 
 # https://github.com/envoyproxy/envoy/issues/28670
@@ -41,6 +41,7 @@ RUN --mount=type=cache,target=/root/.cache cd envoy && bazel build \
       --//source/extensions/filters/http/aws_lambda:enabled=false \
       --//source/extensions/filters/http/aws_request_signing:enabled=false \
       --//source/extensions/filters/http/bandwidth_limit:enabled=false \
+      --//source/extensions/filters/http/basic_auth:enabled=false \
       --//source/extensions/filters/http/cdn_loop:enabled=false \
       --//source/extensions/filters/http/compressor:enabled=false \
       --//source/extensions/filters/http/connect_grpc_bridge:enabled=false \
@@ -49,6 +50,8 @@ RUN --mount=type=cache,target=/root/.cache cd envoy && bazel build \
       --//source/extensions/filters/http/fault:enabled=false \
       --//source/extensions/filters/http/file_system_buffer:enabled=false \
       --//source/extensions/filters/http/gcp_authn:enabled=false \
+      --//source/extensions/filters/http/geoip:enabled=false \
+      --//source/extensions/filters/http/grpc_field_extraction:enabled=false \
       --//source/extensions/filters/http/grpc_http1_bridge:enabled=false \
       --//source/extensions/filters/http/grpc_http1_reverse_bridge:enabled=false \
       --//source/extensions/filters/http/grpc_json_transcoder:enabled=false \
@@ -62,6 +65,7 @@ RUN --mount=type=cache,target=/root/.cache cd envoy && bazel build \
       --//source/extensions/filters/http/on_demand:enabled=false \
       --//source/extensions/filters/http/original_src:enabled=false \
       --//source/extensions/filters/http/tap:enabled=false \
+      --//source/extensions/filters/http/set_filter_state:enabled=false \
       --//source/extensions/filters/http/stateful_session:enabled=false \
       --//source/extensions/filters/http/wasm:enabled=true \
       --//source/extensions/filters/network/dubbo_proxy:enabled=false \
@@ -71,10 +75,15 @@ RUN --mount=type=cache,target=/root/.cache cd envoy && bazel build \
       --//source/extensions/filters/network/thrift_proxy:enabled=false \
       --//source/extensions/filters/network/zookeeper_proxy:enabled=false \
       --//source/extensions/filters/udp/dns_filter:enabled=false \
+      --//source/extensions/filters/udp/udp_proxy:enabled=false \
+      --//source/extensions/filters/udp/udp_proxy/session_filters/dynamic_forward_proxy:enabled=false \
       --//source/extensions/filters/listener/original_dst:enabled=false \
       --//source/extensions/filters/listener/original_src:enabled=false \
       --//source/extensions/filters/listener/proxy_protocol:enabled=false \
+      --//source/extensions/filters/listener/tls_inspector:enabled=false \
+      --//source/extensions/geoip_providers/maxmind:enabled=false \
       --//source/extensions/stat_sinks/dog_statsd:enabled=false \
+      --//source/extensions/stat_sinks/open_telemetry:enabled=false \
       --//source/extensions/stat_sinks/graphite_statsd:enabled=false \
       --//source/extensions/stat_sinks/hystrix:enabled=false \
       --//source/extensions/stat_sinks/statsd:enabled=false \
@@ -82,12 +91,16 @@ RUN --mount=type=cache,target=/root/.cache cd envoy && bazel build \
       --//source/extensions/filters/network/thrift_proxy/filters/header_to_metadata:enabled=false \
       --//source/extensions/filters/network/thrift_proxy/filters/payload_to_metadata:enabled=false \
       --//source/extensions/filters/network/thrift_proxy/filters/ratelimit:enabled=false \
+      --//source/extensions/filters/network/sni_dynamic_forward_proxy:enabled=false \
       --//source/extensions/tracers/dynamic_ot:enabled=false \
       --//source/extensions/tracers/datadog:enabled=false \
       --//source/extensions/tracers/zipkin:enabled=false \
       --//source/extensions/tracers/xray:enabled=false \
       --//source/extensions/tracers/skywalking:enabled=false \
       --//source/extensions/tracers/opentelemetry:enabled=false \
+      --//source/extensions/tracers/opentelemetry/resource_detectors/dynatrace:enabled=false \
+      --//source/extensions/tracers/opentelemetry/resource_detectors/environment:enabled=false \
+      --//source/extensions/tracers/opentelemetry/samplers/always_on:enabled=false \
       --//source/extensions/access_loggers/filters/cel:enabled=false \
       --//source/extensions/access_loggers/grpc:enabled=false \
       --//source/extensions/access_loggers/open_telemetry:enabled=false \
@@ -101,11 +114,14 @@ RUN --mount=type=cache,target=/root/.cache cd envoy && bazel build \
       --//source/extensions/compression/brotli/decompressor:enabled=false \
       --//source/extensions/compression/zstd/compressor:enabled=false \
       --//source/extensions/compression/zstd/decompressor:enabled=false \
+      --//source/extensions/matching/http/cel_input:enabled=false \
+      --//source/extensions/matching/input_matchers/cel_matcher:enabled=false \
       --//source/extensions/matching/input_matchers/consistent_hashing:enabled=false \
       --//source/extensions/matching/network/application_protocol:enabled=false \
       --//source/extensions/matching/network/common:enabled=false \
       --//source/extensions/matching/common_inputs/environment_variable:enabled=false \
       --//source/extensions/transport_sockets/tap:enabled=false \
+      --//source/extensions/transport_sockets/starttls:enabled=false \
       --//source/extensions/transport_sockets/proxy_protocol:enabled=false \
       --//source/extensions/retry/host/omit_canary_hosts:enabled=false \
       --//source/extensions/transport_sockets/tls/cert_validator/spiffe:enabled=false \
@@ -116,6 +132,9 @@ RUN --mount=type=cache,target=/root/.cache cd envoy && bazel build \
       --//source/extensions/early_data:enabled=false \
       --//source/extensions/load_balancing_policies/maglev:enabled=false \
       --//source/extensions/load_balancing_policies/ring_hash:enabled=false \
+      --//source/extensions/router/cluster_specifiers/lua:enabled=false \
+      --//source/extensions/http/cache/file_system_http_cache:enabled=false \
+      --//source/extensions/http/cache/simple_http_cache:enabled=false \
       //source/exe:envoy-static && cp /envoy/bazel-bin/source/exe/envoy-static /root/envoy-bin
 RUN strip /root/envoy-bin
 
