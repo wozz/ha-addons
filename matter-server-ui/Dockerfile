@@ -1,4 +1,4 @@
-FROM golang:1.21 as gobuild
+FROM golang:1.22 as gobuild
 
 WORKDIR /app
 COPY wsproxy/ .
