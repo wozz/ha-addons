@@ -1,6 +1,6 @@
 ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:3.19
 
-FROM golang:1.21 as build
+FROM golang:1.22 as build
 ENV LOGSPOUT_HASSIO_VERSION="v0.0.1"
 
 WORKDIR /go/src/github.com/wozz/
