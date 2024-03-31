@@ -1,6 +1,6 @@
 name: "SilverBullet"
 description: "A workshop for the mind"
-version: "0.0.4"
+version: "0.0.5"
 image: ghcr.io/wozz/ha-addons/silverbullet-{arch}
 panel_icon: mdi:file-document-multiple-outline
 slug: "silverbullet"
