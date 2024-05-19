@@ -32,6 +32,14 @@
       ],
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "wozz/matter-server-ui"
+    },
+    {
+      "fileMatch": ["^juicepassproxy/Dockerfile$"],
+      "matchStrings": [
+        "ARG BASHIO_VERSION=[\"']?(?<currentValue>.+?)[\"']?\\s+"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "hassio-addons/bashio"
     }
   ]
 }
