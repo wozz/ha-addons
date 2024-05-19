@@ -16,3 +16,7 @@ There is some required setup to get some of the config values and ensure the dev
 2. Connect to the juicebox via telnet: `telnet <ip> 2000`, and type `list` to get the connect domain/port in the line marked UDPC.
 3. Translate the domain found in step 2 to the corresponding ip (`dig +short <host> @8.8.8.8`) and set the config field `dst` to the `ip:port` value.
 4. Setup dns override for the domain found in step 2 so that the domain maps to the system running juicepassproxy (home assistant ip)
+
+# Notes
+
+I had to intercept DNS for both `juicenet-udp-prod5-usa.enelx.com` and `jbv1.emotorwerks.com`. It's unclear if that's due to fiddling I did in the remote console, or if it came that way.
