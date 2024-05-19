@@ -1,4 +1,4 @@
-name: "Publish JuiceBoxProxy"
+name: "Publish JuicePassProxy"
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   publish:
-    name: Publish JuiceBoxProxy Image
+    name: Publish JuicePassProxy Image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repository
@@ -22,14 +22,14 @@ jobs:
         uses: ./.github/actions/check-ghcr
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          image: wozz/ha-addons/juiceboxproxy-aarch64
-          configpath: juiceboxproxy/config.yaml
+          image: wozz/ha-addons/juicepassproxy-aarch64
+          configpath: juicepassproxy/config.yaml
       - name: Publish
         if: ${{ steps.check.outputs.status == '404' }}
         uses: home-assistant/builder@master
         with:
           args: |
             --aarch64 \
-            --target juiceboxproxy \
+            --target juicepassproxy \
             --docker-hub ghcr.io/wozz/ha-addons \
-            --image juiceboxproxy-{arch}
+            --image juicepassproxy-{arch}
