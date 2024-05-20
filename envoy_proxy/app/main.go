@@ -322,7 +322,7 @@ func httpManager(routes []*route.Route) *hcm.HttpConnectionManager {
 func prefixMatch(prefix string) *route.RouteMatch {
 	return &route.RouteMatch{
 		PathSpecifier: &route.RouteMatch_Prefix{
-			Prefix: "/",
+			Prefix: prefix,
 		},
 	}
 }
@@ -330,7 +330,7 @@ func prefixMatch(prefix string) *route.RouteMatch {
 func pathMatch(path string) *route.RouteMatch {
 	return &route.RouteMatch{
 		PathSpecifier: &route.RouteMatch_Path{
-			Path: "/internal/metrics",
+			Path: path,
 		},
 	}
 }
