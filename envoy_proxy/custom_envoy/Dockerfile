@@ -1,4 +1,4 @@
-FROM arm64v8/debian:bullseye-slim as build-env
+FROM ghcr.io/hassio-addons/debian-base:7.3.1 as build-env
 RUN --mount=type=cache,target=/var/cache/apt apt-get update && apt-get install -y \
    curl \
    build-essential \
@@ -21,7 +21,7 @@ COPY --from=arm64v8/golang:1.22.3-bullseye /usr/local/go/ /usr/local/go/
 
 ENV PATH="/usr/local/go/bin:${PATH}"
 
-ARG ENVOY_VERSION=1.29.0
+ARG ENVOY_VERSION=1.30.0
 RUN git clone --branch v${ENVOY_VERSION} https://github.com/envoyproxy/envoy.git
 
 # https://github.com/envoyproxy/envoy/issues/28670
@@ -138,7 +138,6 @@ RUN --mount=type=cache,target=/root/.cache cd envoy && bazel build \
       //source/exe:envoy-static && cp /envoy/bazel-bin/source/exe/envoy-static /root/envoy-bin
 RUN strip /root/envoy-bin
 
-FROM arm64v8/debian:bullseye-slim
+FROM ghcr.io/hassio-addons/debian-base:7.3.1
 COPY --from=build-env /root/envoy-bin /usr/local/bin/envoy
 CMD ["/usr/local/bin/envoy"]
-
