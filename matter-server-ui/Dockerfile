@@ -21,7 +21,7 @@ RUN \
         --no-update-notifier \
     && npm run build
 
-FROM alpine:3.19
+FROM alpine:3.20
 
 COPY --from=build /app/matter-server-ui/build /static
 COPY --from=gobuild /app/wsproxy /app/main
