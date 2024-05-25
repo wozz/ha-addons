@@ -1,4 +1,4 @@
-ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:3.19
+ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:3.20
 
 FROM golang:1.22 as build
 ENV LOGSPOUT_HASSIO_VERSION="v0.0.1"
