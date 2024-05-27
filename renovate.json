@@ -36,10 +36,10 @@
     {
       "fileMatch": ["^juicepassproxy/Dockerfile$"],
       "matchStrings": [
-        "ARG BASHIO_VERSION=[\"']?(?<currentValue>.+?)[\"']?\\s+"
+        "ARG JPP_VERSION=[\"']?(?<currentValue>.+?)[\"']?\\s+"
       ],
       "datasourceTemplate": "github-releases",
-      "depNameTemplate": "hassio-addons/bashio"
+      "depNameTemplate": "snicker/juicepassproxy"
     }
   ]
 }
