@@ -139,7 +139,7 @@ func main() {
 	routes := []*route.Route{
 		{
 			Match:  prefixMatch("/"),
-			Action: routeToCluster("service_homeassistant"),
+			Action: routeToCluster("service_homeassistant", time.Minute*3),
 		},
 	}
 
@@ -280,7 +280,7 @@ func udsAddress(path string) *core.Address {
 }
 
 func metricsRoute() *route.Route {
-	routeAction := routeToCluster("admin_interface")
+	routeAction := routeToCluster("admin_interface", time.Second*20)
 	routeAction.Route.PrefixRewrite = "/stats/prometheus"
 	return &route.Route{
 		Match:  pathMatch("/internal/metrics"),
@@ -335,12 +335,13 @@ func pathMatch(path string) *route.RouteMatch {
 	}
 }
 
-func routeToCluster(clusterName string) *route.Route_Route {
+func routeToCluster(clusterName string, routeTimeout time.Duration) *route.Route_Route {
 	return &route.Route_Route{
 		Route: &route.RouteAction{
 			ClusterSpecifier: &route.RouteAction_Cluster{
 				Cluster: clusterName,
 			},
+			Timeout: durationpb.New(routeTimeout),
 		},
 	}
 }
