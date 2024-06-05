@@ -1,6 +1,6 @@
 name: "JuicePassProxy"
 description: "This tool will publish JuiceBox data by using a Man in the Middle UDP proxy to MQTT that is auto-discoverable by HomeAssistant."
-version: "0.1.1"
+version: "0.1.2"
 image: ghcr.io/wozz/ha-addons/juicepassproxy-{arch}
 slug: "juicepassproxy"
 ports:
@@ -17,10 +17,8 @@ services:
 options:
   juicebox_host: null
   juicebox_device_name: JuiceBox
-  dst: 158.47.1.128:8042
   debug: false
 schema:
   juicebox_host: str
   juicebox_device_name: str
-  enelx_ip: 'str?'
   debug: bool
