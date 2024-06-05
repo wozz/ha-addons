@@ -1,3 +1,4 @@
+ARG BUILD_ARCH
 FROM ghcr.io/home-assistant/${BUILD_ARCH}-base-python:3.12-alpine3.19
 # WARNING: Do not update python past 3.12.* if telnetlib is still being used.
 
