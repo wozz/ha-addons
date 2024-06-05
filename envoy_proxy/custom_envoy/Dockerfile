@@ -21,7 +21,7 @@ COPY --from=arm64v8/golang:1.22.4-bullseye /usr/local/go/ /usr/local/go/
 
 ENV PATH="/usr/local/go/bin:${PATH}"
 
-ARG ENVOY_VERSION=1.30.1
+ARG ENVOY_VERSION=1.30.2
 RUN git clone --branch v${ENVOY_VERSION} https://github.com/envoyproxy/envoy.git
 
 # https://github.com/envoyproxy/envoy/issues/28670

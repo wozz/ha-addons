@@ -8,8 +8,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 # unfortunately, the default envoy images won't run on raspberry pi
 # see discussion here: https://github.com/envoyproxy/envoy/issues/23339
 # Dockerfile for this image is included in custom_envoy directory
-# currently: v1.30.1
-FROM us-docker.pkg.dev/wozz-hass/public/envoyproxy:v1.30.1
+# currently: v1.30.2
+FROM us-docker.pkg.dev/wozz-hass/public/envoyproxy:v1.30.2
 
 COPY --from=builder /app/main /app/main
 
