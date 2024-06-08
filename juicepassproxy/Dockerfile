@@ -4,7 +4,7 @@ FROM ghcr.io/home-assistant/${BUILD_ARCH}-base-python:3.12-alpine3.19
 
 ENV DEBUG=false
 
-ARG JPP_VERSION="v0.3.0"
+ARG JPP_VERSION="v0.3.1"
 RUN curl -J -L -o /tmp/jpp.tar.gz \
       "https://github.com/snicker/juicepassproxy/archive/refs/tags/${JPP_VERSION}.tar.gz" \
     && mkdir /tmp/jpp \
