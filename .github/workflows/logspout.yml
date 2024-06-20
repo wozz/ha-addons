@@ -29,7 +29,7 @@ jobs:
         uses: home-assistant/builder@master
         with:
           args: |
-            --aarch64 \
+            --aarch64 --amd64 \
             --target logspout \
             --docker-hub ghcr.io/wozz/ha-addons \
             --image logspout-{arch}

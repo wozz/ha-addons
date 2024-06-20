@@ -1,12 +1,13 @@
 # https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
 name: Logspout addon
-version: "1.6.6"
+version: "1.6.7"
 image: "ghcr.io/wozz/ha-addons/logspout-{arch}"
 slug: logspout
 description: "Send HA logging to remote log management systems"
 url: "https://github.com/wozz/ha-addons/tree/main/logspout"
 arch:
   - aarch64
+  - amd64
 init: false
 startup: system
 advanced: true
