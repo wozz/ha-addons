@@ -1,6 +1,6 @@
 {
     "name": "S3 Backup",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "slug": "s3-backup",
     "description": "Sync Backups to your S3 bucket",
     "url": "https://github.com/wozz/ha-addons/tree/main/amazon-s3-backup",
@@ -17,14 +17,16 @@
       "aws_secret_access_key": "",
       "custom_endpoint": "",
       "bucket_name": "",
-      "bucket_region": "us-east-1"
+      "bucket_region": "us-east-1",
+      "include_local": false
     },
     "schema": {
       "aws_access_key": "str",
       "aws_secret_access_key": "password",
       "custom_endpoint": "str",
       "bucket_name": "str",
-      "bucket_region": "str"
+      "bucket_region": "str",
+      "include_local": "bool?"
     },
     "map": ["backup:rw"]
   }
