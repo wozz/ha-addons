@@ -17,7 +17,7 @@ RUN --mount=type=cache,target=/var/cache/apt apt-get update && apt-get install -
 
 RUN curl -L -s -o /usr/local/bin/bazel https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-arm64 && chmod +x /usr/local/bin/bazel
 
-COPY --from=arm64v8/golang:1.22.4-bullseye /usr/local/go/ /usr/local/go/
+COPY --from=arm64v8/golang:1.22.5-bullseye /usr/local/go/ /usr/local/go/
 
 ENV PATH="/usr/local/go/bin:${PATH}"
 
