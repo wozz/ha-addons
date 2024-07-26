@@ -1,4 +1,4 @@
-FROM ghcr.io/hassio-addons/debian-base:7.3.4 as build-env
+FROM ghcr.io/hassio-addons/debian-base:7.4.0 as build-env
 RUN --mount=type=cache,target=/var/cache/apt apt-get update && apt-get install -y \
    curl \
    build-essential \
@@ -138,6 +138,6 @@ RUN --mount=type=cache,target=/root/.cache cd envoy && bazel build \
       //source/exe:envoy-static && cp /envoy/bazel-bin/source/exe/envoy-static /root/envoy-bin
 RUN strip /root/envoy-bin
 
-FROM ghcr.io/hassio-addons/debian-base:7.3.4
+FROM ghcr.io/hassio-addons/debian-base:7.4.0
 COPY --from=build-env /root/envoy-bin /usr/local/bin/envoy
 CMD ["/usr/local/bin/envoy"]
