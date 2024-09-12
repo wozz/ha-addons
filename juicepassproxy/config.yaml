@@ -5,6 +5,7 @@ image: ghcr.io/wozz/ha-addons/juicepassproxy-{arch}
 slug: "juicepassproxy"
 ports:
   "8047/udp": 8047
+  "8043/udp": 8043
   "8042/udp": 8042
 panel_icon: mdi:ev-station
 arch:
