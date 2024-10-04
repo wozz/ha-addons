@@ -4,7 +4,7 @@
 
 **juicebox_device_name**: Set this field to the name of the device given in the Enel X Way app.
 
-**debug**: Enable debug loggin
+**debug**: Enable debug logging
 
 # Setup
 
