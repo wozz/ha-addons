@@ -4,16 +4,15 @@ FROM ghcr.io/home-assistant/${BUILD_ARCH}-base-python:3.12-alpine3.19
 
 ENV DEBUG=false
 
-RUN apk --no-cache add patch
-
 ARG JPP_VERSION="f3d7b1f0944f068045d53bdcb6a963e0ca5fee0d"
-RUN curl -J -L -o /tmp/jpp.tar.gz \
-      "https://github.com/snicker/juicepassproxy/archive/${JPP_VERSION}.tar.gz" \
+RUN apk --no-cache add patch \
+    && curl -J -L -o /tmp/jpp.tar.gz \
+      "https://github.com/JuiceRescue/juicepassproxy/archive/${JPP_VERSION}.tar.gz" \
     && mkdir /tmp/jpp \
     && tar zxvf \
       /tmp/jpp.tar.gz \
       --strip 1 -C /tmp/jpp \
-    && curl -L -o /tmp/69.patch "https://github.com/snicker/juicepassproxy/compare/f3d7b1f0944f068045d53bdcb6a963e0ca5fee0d...ivanfmartinez:juicepassproxy:juicebox_commands.diff" \
+    && curl -L -o /tmp/69.patch "https://github.com/JuiceRescue/juicepassproxy/compare/f3d7b1f0944f068045d53bdcb6a963e0ca5fee0d...ivanfmartinez:juicepassproxy:juicebox_commands.diff" \
     && cd /tmp/jpp && patch < /tmp/69.patch && cd /tmp \
     && mv /tmp/jpp /juicepassproxy \
   && pip install --root-user-action=ignore --no-cache-dir -r /juicepassproxy/requirements.txt && \
