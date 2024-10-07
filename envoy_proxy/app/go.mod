@@ -1,11 +1,13 @@
 module app
 
-go 1.20
+go 1.21
+
+toolchain go1.23.2
 
 require (
 	github.com/envoyproxy/go-control-plane v0.12.0
 	github.com/geraldo-labs/merge-struct v1.0.0
-	google.golang.org/protobuf v1.34.2
+	google.golang.org/protobuf v1.35.1
 )
 
 require (
