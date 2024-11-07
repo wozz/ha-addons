@@ -21,7 +21,7 @@ COPY --from=arm64v8/golang:1.23.2-bullseye /usr/local/go/ /usr/local/go/
 
 ENV PATH="/usr/local/go/bin:${PATH}"
 
-ARG ENVOY_VERSION=1.30.2
+ARG ENVOY_VERSION=1.32.1
 RUN git clone --branch v${ENVOY_VERSION} https://github.com/envoyproxy/envoy.git
 
 # https://github.com/envoyproxy/envoy/issues/28670
@@ -92,7 +92,6 @@ RUN --mount=type=cache,target=/root/.cache cd envoy && bazel build \
       --//source/extensions/filters/network/thrift_proxy/filters/payload_to_metadata:enabled=false \
       --//source/extensions/filters/network/thrift_proxy/filters/ratelimit:enabled=false \
       --//source/extensions/filters/network/sni_dynamic_forward_proxy:enabled=false \
-      --//source/extensions/tracers/dynamic_ot:enabled=false \
       --//source/extensions/tracers/datadog:enabled=false \
       --//source/extensions/tracers/zipkin:enabled=false \
       --//source/extensions/tracers/xray:enabled=false \
