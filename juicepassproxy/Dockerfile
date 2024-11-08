@@ -1,5 +1,5 @@
 ARG BUILD_ARCH="aarch64"
-FROM ghcr.io/home-assistant/${BUILD_ARCH}-base-python:3.12-alpine3.19
+FROM ghcr.io/home-assistant/${BUILD_ARCH}-base-python:3.13-alpine3.19
 # WARNING: Do not update python past 3.12.* if telnetlib is still being used.
 
 ENV DEBUG=false
