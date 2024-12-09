@@ -5,7 +5,7 @@ COPY wsproxy/ .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o wsproxy .
 
-FROM node:21-alpine3.18 as build
+FROM node:22-alpine3.18 as build
 WORKDIR /app
 
 ENV MATTER_SERVER_UI_VERSION="v0.2.4"
