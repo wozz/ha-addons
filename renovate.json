@@ -32,14 +32,6 @@
       ],
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "wozz/matter-server-ui"
-    },
-    {
-      "fileMatch": ["^juicepassproxy/Dockerfile$"],
-      "matchStrings": [
-        "ARG JPP_VERSION=[\"']?(?<currentValue>.+?)[\"']?\\s+"
-      ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "snicker/juicepassproxy"
     }
   ]
 }
