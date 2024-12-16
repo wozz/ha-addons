@@ -7,7 +7,7 @@ toolchain go1.23.4
 require (
 	github.com/envoyproxy/go-control-plane v0.12.0
 	github.com/geraldo-labs/merge-struct v1.0.0
-	google.golang.org/protobuf v1.35.2
+	google.golang.org/protobuf v1.36.0
 )
 
 require (
