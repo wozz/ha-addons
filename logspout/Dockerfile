@@ -1,6 +1,6 @@
 ARG BUILD_ARCH
 
-FROM golang:1.23 as build
+FROM golang:1.24 as build
 ENV LOGSPOUT_HASSIO_VERSION="v0.0.1"
 
 WORKDIR /go/src/github.com/wozz/
