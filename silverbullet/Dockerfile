@@ -1,4 +1,4 @@
-FROM zefhemel/silverbullet:0.9.4
+FROM zefhemel/silverbullet:0.10.4
 
 VOLUME /data
 
